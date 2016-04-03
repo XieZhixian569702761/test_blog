@@ -1,1 +1,1 @@
-# test_blog
+# 练习：使用Express + MongoDB 搭建多人博客
