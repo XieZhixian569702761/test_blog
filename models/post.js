@@ -15,9 +15,9 @@ Post.prototype.save = function (callback) {
 	var time = {
 		date:date,
 		year:date.getFullYear(),
-		month:data.getFullYear() + "-" + (date.getMonth() +１),
-		day:data.getFullYear() + "-" + (date.getMonth() +１) + "-" + date.getDate(),
-		minute:data.getFullYear() + "-" + (date.getMonth() +１) + "-" + date.getDate() + " " + 
+		month:data.getFullYear() + "-" + (date.getMonth() + 1),
+		day:data.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
+		minute:data.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + 
 		getHours() + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes())
 	}
 	// 要存入数据库的文档
@@ -47,6 +47,36 @@ Post.prototype.save = function (callback) {
 					return callback(err); // 失败！返回err
 				}
 				callback(null); //返回err为null
+			});
+		});
+	});
+};
+
+// 读取文章及其相关信息
+Post.get = function(name , callback) {
+	mongodb.open(function(err,db) {
+		if (err) {
+			return callback(err);
+		}
+		// 读取post集合
+		db.collection('post',function(err,collection) {
+			if (err) {
+				mongodb.close();
+				return callback(err);
+			}
+			var query = {};
+			if (name) {
+				query.name = name;
+			}
+			// 根据query对象查询文章
+			collection.find(query).sort({
+				time:-1
+			}).toArray(function (err,docs){
+				mongodb.close();
+				if (err) {
+					return callback(err);
+				}				
+				callback(null,docs); //成功！以数组形式返回查询的结果
 			});
 		});
 	});
